@@ -7,7 +7,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        precice-version: ['develop', 'master']
+        precice-version: ['develop', 'main']
 
     steps:
       - name: Check out repository
