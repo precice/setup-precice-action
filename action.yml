@@ -18,8 +18,8 @@ runs:
     
     - name: install dependencies
       run: |
-        apt update
-        apt install -y build-essential cmake libeigen3-dev libxml2-dev libboost-all-dev petsc-dev python3-dev python3-numpy
+        sudo apt update
+        sudo apt install -y build-essential cmake libeigen3-dev libxml2-dev libboost-all-dev petsc-dev python3-dev python3-numpy
       shell: bash
 
     - name: Generate build directory
