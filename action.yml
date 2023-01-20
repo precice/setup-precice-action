@@ -9,6 +9,7 @@ inputs:
 
 runs:
   using: "composite"
+  shell: bash
   steps: 
     - name: check out repository
       uses: actions/checkout@v3
@@ -40,9 +41,9 @@ runs:
       run: make install
 
     - name: Add to path
-        run: |
-          export PATH=$GITHUB_WORKSPACE/precice/bin:$PATH
-          export LD_LIBRARY_PATH=$GITHUB_WORKSPACE/precice/lib:$LD_LIBRARY_PATH
-          export CPATH=$GITHUB_WORKSPACE/precice/include:$CPATH
-          export PKG_CONFIG_PATH=$GITHUB_WORKSPACE/precice/lib/pkgconfig:$PKG_CONFIG_PATH
-          export CMAKE_PREFIX_PATH=$GITHUB_WORKSPACE/precice:$CMAKE_PREFIX_PATH
+      run: |
+        export PATH=$GITHUB_WORKSPACE/precice/bin:$PATH
+        export LD_LIBRARY_PATH=$GITHUB_WORKSPACE/precice/lib:$LD_LIBRARY_PATH
+        export CPATH=$GITHUB_WORKSPACE/precice/include:$CPATH
+        export PKG_CONFIG_PATH=$GITHUB_WORKSPACE/precice/lib/pkgconfig:$PKG_CONFIG_PATH
+        export CMAKE_PREFIX_PATH=$GITHUB_WORKSPACE/precice:$CMAKE_PREFIX_PATH
