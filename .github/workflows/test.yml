@@ -5,14 +5,15 @@ jobs:
   test:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         precice-version: ['develop', 'master']
 
     steps:
-      - name: check out repository
+      - name: Check out repository
         uses: actions/checkout@v3
       
-      - name: set up precice
+      - name: Set up precice
         uses: ./
         with:
           precice-version: ${{ matrix.precice-version }}
