@@ -24,6 +24,7 @@ runs:
 
     - name: Generate build directory
       run: mkdir -p build
+      shell: bash
 
     - name: Configure
       working-directory: build
