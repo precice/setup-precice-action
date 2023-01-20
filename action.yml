@@ -30,15 +30,18 @@ runs:
       run: |
         cmake --version
         cmake -DCMAKE_INSTALL_PREFIX=$GITHUB_WORKSPACE/precice -DCMAKE_BUILD_TYPE=Release -DPRECICE_PETScMapping=OFF -DPRECICE_Python_Actions=OFF ..
+      shell: bash
 
     - name: Compile
       working-directory: build
       run: |
         make -j $(nproc)
+      shell: bash
 
     - name: Install
       working-directory: build
       run: make install
+      shell: bash
 
     - name: Add to path
       run: |
@@ -47,3 +50,4 @@ runs:
         export CPATH=$GITHUB_WORKSPACE/precice/include:$CPATH
         export PKG_CONFIG_PATH=$GITHUB_WORKSPACE/precice/lib/pkgconfig:$PKG_CONFIG_PATH
         export CMAKE_PREFIX_PATH=$GITHUB_WORKSPACE/precice:$CMAKE_PREFIX_PATH
+      shell: bash
