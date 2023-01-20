@@ -1,0 +1,48 @@
+name: 'Build preCICE'
+description: 'Installs preCICE and adds it to the path. Ends in `$GITHUB_WORKSPACE/precice`'
+
+inputs:
+  precice-version:
+    required: true
+    default: 'develop'
+    description: 'The version of preCICE to use. Can be a branch or tag or SHA. Defaults to `develop`'
+
+runs:
+  using: "composite"
+  steps: 
+    - name: check out repository
+      uses: actions/checkout@v3
+      with:
+        repository: precice/precice
+        ref: ${{ inputs.precice-version }}
+    
+    - name: install dependencies
+        run: |
+            apt update
+            apt install -y build-essential cmake libeigen3-dev libxml2-dev libboost-all-dev petsc-dev python3-dev python3-numpy
+
+    - name: Generate build directory
+        run: mkdir -p build
+
+    - name: Configure
+      working-directory: build
+      run: |
+        cmake --version
+        cmake -DCMAKE_INSTALL_PREFIX=$GITHUB_WORKSPACE/precice -DCMAKE_BUILD_TYPE=Release -DPRECICE_PETScMapping=OFF -DPRECICE_Python_Actions=OFF ..
+
+    - name: Compile
+      working-directory: build
+      run: |
+        make -j $(nproc)
+
+    - name: Install
+      working-directory: build
+      run: make install
+
+    - name: Add to path
+        run: |
+          echo "$GITHUB_WORKSPACE/precice/bin" >> $PATH
+          echo "$GITHUB_WORKSPACE/precice/lib" >> $LD_LIBRARY_PATH
+          echo "$GITHUB_WORKSPACE/precice/include" >> $CPATH
+          echo "$GITHUB_WORKSPACE/precice/lib/pkgconfig" >> $PKG_CONFIG_PATH
+          echo "$GITHUB_WORKSPACE/precice" >> $CMAKE_PREFIX_PATH
