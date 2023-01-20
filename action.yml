@@ -1,5 +1,5 @@
 name: 'Build preCICE'
-description: 'Installs preCICE and adds it to the path. Ends in `$GITHUB_WORKSPACE/precice`'
+description: 'Installs preCICE in  and adds it to the path.'
 
 inputs:
   precice-version:
@@ -19,6 +19,7 @@ runs:
       with:
         repository: precice/precice
         ref: ${{ inputs.precice-version }}
+        path: precice
     
     - name: install dependencies
       run: |
