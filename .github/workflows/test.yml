@@ -5,7 +5,6 @@ jobs:
   test:
     runs-on: ubuntu-latest
     strategy:
-      fail-fast: false
       matrix:
         precice-version: ['develop', 'main']
 
@@ -32,6 +31,6 @@ jobs:
           echo $PWD
 
       - name: Run tests
-        working-directory: build
+        working-directory: precice/build
         run: |
           ctest
