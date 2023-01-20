@@ -9,7 +9,6 @@ inputs:
 
 runs:
   using: "composite"
-  shell: bash
   steps: 
     - name: check out repository
       uses: actions/checkout@v3
@@ -21,9 +20,10 @@ runs:
       run: |
         apt update
         apt install -y build-essential cmake libeigen3-dev libxml2-dev libboost-all-dev petsc-dev python3-dev python3-numpy
+      shell: bash
 
     - name: Generate build directory
-        run: mkdir -p build
+      run: mkdir -p build
 
     - name: Configure
       working-directory: build
