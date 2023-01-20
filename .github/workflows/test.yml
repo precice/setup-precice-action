@@ -23,7 +23,7 @@ jobs:
         uses: ./
         with:
           precice-version: ${{ matrix.precice-version }}
-          build-tests: 'OFF'
+          build-tests: 'ON'
 
       - name: debug
         run: |
@@ -31,7 +31,7 @@ jobs:
           ls -la
           echo $PWD
 
-      # - name: Run tests
-      #   working-directory: build
-      #   run: |
-      #     ctest
+      - name: Run tests
+        working-directory: build
+        run: |
+          ctest
