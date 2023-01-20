@@ -52,9 +52,9 @@ runs:
 
     - name: Add to path
       run: |
-        export PATH=$GITHUB_WORKSPACE/precice/bin:$PATH
-        export LD_LIBRARY_PATH=$GITHUB_WORKSPACE/precice/lib:$LD_LIBRARY_PATH
-        export PKG_CONFIG_PATH=$GITHUB_WORKSPACE/precice/lib/pkgconfig:$PKG_CONFIG_PATH
-        export CPATH=$PRECICE_PREFIX/include:$CPATH
-        export CMAKE_PREFIX_PATH=$PRECICE_PREFIX:$CMAKE_PREFIX_PATH
+        echo "$GITHUB_WORKSPACE/precice/bin" >> $GITHUB_PATH
+        echo "$GITHUB_WORKSPACE/precice/lib" >> $GITHUB_PATH
+        echo "$GITHUB_WORKSPACE/precice/lib/pkgconfig" >> $GITHUB_PATH
+        echo "$GITHUB_WORKSPACE/precice/include" >> $GITHUB_PATH
+        echo "$GITHUB_WORKSPACE/precice" >> $GITHUB_PATH
       shell: bash
