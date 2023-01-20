@@ -6,6 +6,10 @@ inputs:
     required: true
     default: 'develop'
     description: 'The version of preCICE to use. Can be a branch or tag or SHA. Defaults to `develop`'
+  build-tests:
+    required: false
+    default: 'OFF'
+    description: 'Whether to build tests. Defaults to `OFF`'
 
 runs:
   using: "composite"
@@ -30,7 +34,7 @@ runs:
       working-directory: build
       run: |
         cmake --version
-        cmake -DCMAKE_INSTALL_PREFIX=$GITHUB_WORKSPACE/precice -DCMAKE_BUILD_TYPE=Release -DPRECICE_PETScMapping=OFF -DPRECICE_Python_Actions=OFF ..
+        cmake -DCMAKE_INSTALL_PREFIX=$GITHUB_WORKSPACE/precice -DCMAKE_BUILD_TYPE=Release -DPRECICE_PETScMapping=OFF -DPRECICE_Python_Actions=OFF -DBUILD-TESTING=${{ inputs.build-tests }} ..
       shell: bash
 
     - name: Compile

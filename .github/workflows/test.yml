@@ -12,8 +12,19 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v3
+
+      - name: debug
+        run: |
+          echo $GITHUB_WORKSPACE
+          ls -la
       
-      - name: Set up precice
+      - name: Set up preCICE
         uses: ./
         with:
           precice-version: ${{ matrix.precice-version }}
+          build-tests: 'OFF'
+
+      # - name: Run tests
+      #   working-directory: build
+      #   run: |
+      #     ctest
