@@ -28,25 +28,25 @@ runs:
       shell: bash
 
     - name: Generate build directory
-      working-directory: $GITHUB_WORKSPACE/precice/build
+      working-directory: precice
       run: mkdir -p build
       shell: bash
 
     - name: Configure
-      working-directory: $GITHUB_WORKSPACE/precice/build
+      working-directory: precice/build
       run: |
         cmake --version
         cmake -DCMAKE_INSTALL_PREFIX=$GITHUB_WORKSPACE/precice -DCMAKE_BUILD_TYPE=Release -DPRECICE_PETScMapping=OFF -DPRECICE_Python_Actions=OFF -DBUILD_TESTING=${{ inputs.build-tests }} ..
       shell: bash
 
     - name: Compile
-      working-directory: $GITHUB_WORKSPACE/precice/build
+      working-directory: precice/build
       run: |
         make -j $(nproc)
       shell: bash
 
     - name: Install
-      working-directory: $GITHUB_WORKSPACE/precice/build
+      working-directory: precice/build
       run: make install
       shell: bash
 
