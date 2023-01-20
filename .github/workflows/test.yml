@@ -17,12 +17,19 @@ jobs:
         run: |
           echo $GITHUB_WORKSPACE
           ls -la
+          echo $PWD
       
       - name: Set up preCICE
         uses: ./
         with:
           precice-version: ${{ matrix.precice-version }}
           build-tests: 'OFF'
+
+      - name: debug
+        run: |
+          echo $GITHUB_WORKSPACE
+          ls -la
+          echo $PWD
 
       # - name: Run tests
       #   working-directory: build
