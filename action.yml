@@ -34,7 +34,7 @@ runs:
       working-directory: build
       run: |
         cmake --version
-        cmake -DCMAKE_INSTALL_PREFIX=$GITHUB_WORKSPACE/precice -DCMAKE_BUILD_TYPE=Release -DPRECICE_PETScMapping=OFF -DPRECICE_Python_Actions=OFF -DBUILD-TESTING=${{ inputs.build-tests }} ..
+        cmake -DCMAKE_INSTALL_PREFIX=$GITHUB_WORKSPACE/precice -DCMAKE_BUILD_TYPE=Release -DPRECICE_PETScMapping=OFF -DPRECICE_Python_Actions=OFF -DBUILD_TESTING=${{ inputs.build-tests }} ..
       shell: bash
 
     - name: Compile
@@ -49,5 +49,10 @@ runs:
       shell: bash
 
     - name: Add to path
-      run: export PATH=$GITHUB_WORKSPACE/precice/bin:$PATH
+      run: |
+        export PATH=$GITHUB_WORKSPACE/precice/bin:$PATH
+        export LD_LIBRARY_PATH=$GITHUB_WORKSPACE/precice/lib:$LD_LIBRARY_PATH
+        export PKG_CONFIG_PATH=$GITHUB_WORKSPACE/precice/lib/pkgconfig:$PKG_CONFIG_PATH
+        export CPATH=$PRECICE_PREFIX/include:$CPATH
+        export CMAKE_PREFIX_PATH=$PRECICE_PREFIX:$CMAKE_PREFIX_PATH
       shell: bash
