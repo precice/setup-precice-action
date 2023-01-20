@@ -1,5 +1,5 @@
 name: 'Build preCICE'
-description: 'Installs preCICE in  and adds it to the path.'
+description: 'Installs preCICE in $GITHUB_WORKSPACE/precice and adds it to the path.'
 
 inputs:
   precice-version:
