@@ -30,33 +30,41 @@ runs:
       shell: bash
 
     - name: Generate build directory
-      working-directory: $HOME/precice
-      run: mkdir -p build
       shell: bash
+      working-directory: precice
+      env: 
+        GITHUB_WORKSPACE: $HOME
+      run: mkdir -p build
 
     - name: Configure
-      working-directory: $HOME/precice/build
+      shell: bash
+      working-directory: precice/build
+      env:
+        GITHUB_WORKSPACE: $HOME
       run: |
         cmake --version
         cmake -DCMAKE_INSTALL_PREFIX=$HOME/precice -DCMAKE_BUILD_TYPE=Release -DPRECICE_PETScMapping=OFF -DPRECICE_Python_Actions=OFF -DBUILD_TESTING=${{ inputs.build-tests }} ..
-      shell: bash
 
     - name: Compile
-      working-directory: $HOME/precice/build
+      shell: bash
+      working-directory: precice/build
+      env:
+        GITHUB_WORKSPACE: $HOME
       run: |
         make -j $(nproc)
-      shell: bash
 
     - name: Install
-      working-directory: $HOME/precice/build
-      run: make install
       shell: bash
+      working-directory: precice/build
+      env:
+        GITHUB_WORKSPACE: $HOME
+      run: make install
 
     - name: Add to path
+      shell: bash
       run: |
         echo "PATH=$HOME/precice/bin:$PATH" >> $GITHUB_ENV
         echo "LD_LIBRARY_PATH=$HOME/precice/lib:$LD_LIBRARY_PATH" >> $GITHUB_ENV
         echo "PKG_CONFIG_PATH=$HOME/precice/lib/pkgconfig:$PKG_CONFIG_PATH" >> $GITHUB_ENV
         echo "CPATH=$HOME/precice/include:$CPATH" >> $GITHUB_ENV
         echo "CMAKE_PREFIX_PATH=$HOME/precice:$CMAKE_PREFIX_PATH" >> $GITHUB_ENV
-      shell: bash
