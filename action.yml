@@ -1,5 +1,5 @@
 name: 'Build preCICE'
-description: 'Installs preCICE in $GITHUB_WORKSPACE/precice and adds it to the path.'
+description: 'Installs preCICE in $HOME/precice and adds it to the path.'
 
 inputs:
   precice-version:
@@ -14,12 +14,14 @@ inputs:
 runs:
   using: "composite"
   steps: 
-    - name: check out repository
+    - name: check out repository # clone to $HOME/precice
       uses: actions/checkout@v3
       with:
         repository: precice/precice
         ref: ${{ inputs.precice-version }}
         path: precice
+      env: 
+        GITHUB_WORKSPACE: $HOME
     
     - name: install dependencies
       run: |
@@ -28,33 +30,33 @@ runs:
       shell: bash
 
     - name: Generate build directory
-      working-directory: precice
+      working-directory: $HOME/precice
       run: mkdir -p build
       shell: bash
 
     - name: Configure
-      working-directory: precice/build
+      working-directory: $HOME/precice/build
       run: |
         cmake --version
-        cmake -DCMAKE_INSTALL_PREFIX=$GITHUB_WORKSPACE/precice -DCMAKE_BUILD_TYPE=Release -DPRECICE_PETScMapping=OFF -DPRECICE_Python_Actions=OFF -DBUILD_TESTING=${{ inputs.build-tests }} ..
+        cmake -DCMAKE_INSTALL_PREFIX=$HOME/precice -DCMAKE_BUILD_TYPE=Release -DPRECICE_PETScMapping=OFF -DPRECICE_Python_Actions=OFF -DBUILD_TESTING=${{ inputs.build-tests }} ..
       shell: bash
 
     - name: Compile
-      working-directory: precice/build
+      working-directory: $HOME/precice/build
       run: |
         make -j $(nproc)
       shell: bash
 
     - name: Install
-      working-directory: precice/build
+      working-directory: $HOME/precice/build
       run: make install
       shell: bash
 
     - name: Add to path
       run: |
-        echo "PATH=$GITHUB_WORKSPACE/precice/bin:$PATH" >> $GITHUB_ENV
-        echo "LD_LIBRARY_PATH=$GITHUB_WORKSPACE/precice/lib:$LD_LIBRARY_PATH" >> $GITHUB_ENV
-        echo "PKG_CONFIG_PATH=$GITHUB_WORKSPACE/precice/lib/pkgconfig:$PKG_CONFIG_PATH" >> $GITHUB_ENV
-        echo "CPATH=$GITHUB_WORKSPACE/precice/include:$CPATH" >> $GITHUB_ENV
-        echo "CMAKE_PREFIX_PATH=$GITHUB_WORKSPACE/precice:$CMAKE_PREFIX_PATH" >> $GITHUB_ENV
+        echo "PATH=$HOME/precice/bin:$PATH" >> $GITHUB_ENV
+        echo "LD_LIBRARY_PATH=$HOME/precice/lib:$LD_LIBRARY_PATH" >> $GITHUB_ENV
+        echo "PKG_CONFIG_PATH=$HOME/precice/lib/pkgconfig:$PKG_CONFIG_PATH" >> $GITHUB_ENV
+        echo "CPATH=$HOME/precice/include:$CPATH" >> $GITHUB_ENV
+        echo "CMAKE_PREFIX_PATH=$HOME/precice:$CMAKE_PREFIX_PATH" >> $GITHUB_ENV
       shell: bash
