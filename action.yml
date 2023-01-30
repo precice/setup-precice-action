@@ -9,7 +9,7 @@ inputs:
   build-tests:
     required: false
     default: 'OFF'
-    description: 'Whether to build tests. Defaults to `OFF`'
+    description: 'Whether to build tests. Default is `OFF`'
 
 runs:
   using: "composite"
