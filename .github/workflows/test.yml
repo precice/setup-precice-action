@@ -1,8 +1,14 @@
 name: 'Test setup-precice-action'
-on: 
+on:
   push:
-    - main
-  pull_request
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+      - develop
+
 
 jobs:
   test:
