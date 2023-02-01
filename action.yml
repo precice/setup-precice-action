@@ -36,6 +36,11 @@ runs:
         GITHUB_WORKSPACE: $HOME
       run: mkdir -p build
 
+    - name: Show preCICE state
+      shell: bash
+      working-directory: precice
+      run: git log -n 1
+
     - name: Configure
       shell: bash
       working-directory: precice/build
