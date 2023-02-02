@@ -12,8 +12,8 @@ inputs:
     description: 'Whether to build tests. Default is `OFF`'
   install-prefix:
     required: false
-    default: '/usr/local'
-    description: 'The installation prefix for preCICE. Default is `/usr/local`'
+    default: '$HOME/precice'
+    description: 'The installation prefix for preCICE. Default is `$HOME/precice`'
 
 runs:
   using: "composite"
