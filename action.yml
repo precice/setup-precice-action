@@ -1,5 +1,5 @@
 name: 'Build preCICE'
-description: 'Installs preCICE in $HOME/precice and adds it to the path.'
+description: 'Installs preCICE in the given prefix and adds it to the path.'
 
 inputs:
   precice-version:
@@ -10,11 +10,15 @@ inputs:
     required: false
     default: 'OFF'
     description: 'Whether to build tests. Default is `OFF`'
+  install-prefix:
+    required: false
+    default: '/usr/local'
+    description: 'The installation prefix for preCICE. Default is `/usr/local`'
 
 runs:
   using: "composite"
   steps: 
-    - name: check out repository # clone to $HOME/precice
+    - name: check out repository
       uses: actions/checkout@v3
       with:
         repository: precice/precice
@@ -48,7 +52,7 @@ runs:
         GITHUB_WORKSPACE: $HOME
       run: |
         cmake --version
-        cmake -DCMAKE_INSTALL_PREFIX=$HOME/precice -DCMAKE_BUILD_TYPE=Release -DPRECICE_PETScMapping=OFF -DPRECICE_Python_Actions=OFF -DBUILD_TESTING=${{ inputs.build-tests }} ..
+        cmake -DCMAKE_INSTALL_PREFIX=${{ inputs.install-prefix }} -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=${{ inputs.build-tests }} ..
 
     - name: Compile
       shell: bash
