@@ -41,9 +41,9 @@ jobs:
           echo $PWD
           echo $LD_LIBRARY_PATH
           if [[ ${{ matrix.precice-version }} =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-            echo "release=true >> $GITHUB_OUTPUT"
+            echo "release=true" >> $GITHUB_OUTPUT
           else
-            echo "release=false >> $GITHUB_OUTPUT"
+            echo "release=false" >> $GITHUB_OUTPUT
           fi
 
       - name: Run tests if not release tag
