@@ -34,12 +34,8 @@ jobs:
           precice-version: ${{ matrix.precice-version }}
           build-tests: 'ON'
 
-      - name: debug
-        run: |
-          echo $GITHUB_WORKSPACE
-          ls -la
-          echo $PWD
-          echo $LD_LIBRARY_PATH
+      - name: Check release version
+        id: check-release
           if [[ ${{ matrix.precice-version }} =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
             echo "release=true" >> $GITHUB_OUTPUT
             echo "release=true"
@@ -48,10 +44,18 @@ jobs:
             echo "release=false"
           fi
 
+      - name:
+        run: |
+          echo ${{ steps.check-release.outputs.release }}
+          echo $GITHUB_WORKSPACE
+          ls -la
+          echo $PWD
+          echo $LD_LIBRARY_PATH
+
+
       - name: Run tests if not release tag
-        if: steps.debug.outputs.release == 'false'
+        if: steps.check-release.outputs.release == 'false'
         working-directory: precice/build
         run: |
-          echo ${{ steps.debug.outputs.release }}
           ctest
           make test_install
