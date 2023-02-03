@@ -35,9 +35,10 @@ runs:
       run: |
         sudo apt update
         sudo apt install -y wget
-        wget https://github.com/precice/precice/releases/download/${{ inputs.precice-version }}/libprecice2_${{ inputs.precice-version\#"v" }}_$(lsb_release -cs).deb
-        sudo apt install -y ./libprecice2_${{ inputs.precice-version\#"v" }}_$(lsb_release -cs).deb
-        rm libprecice2_${{ inputs.precice-version\#"v" }}_$(lsb_release -cs).deb
+        VERSION=${{ inputs.precice-version }}
+        wget https://github.com/precice/precice/releases/download/${VERSION}/libprecice2_${VERSION#v}_$(lsb_release -cs).deb
+        sudo apt install -y ./libprecice2_${VERSION#v}_$(lsb_release -cs).deb
+        rm libprecice2_${VERSION#v}_$(lsb_release -cs).deb
         exit 0
 
     - name: check out repository
