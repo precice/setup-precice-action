@@ -39,15 +39,22 @@ runs:
         wget https://github.com/precice/precice/releases/download/${VERSION}/libprecice2_${VERSION#v}_$(lsb_release -cs).deb
         sudo apt install -y ./libprecice2_${VERSION#v}_$(lsb_release -cs).deb
         rm libprecice2_${VERSION#v}_$(lsb_release -cs).deb
+    
+    - name: Get preCICE version hash
+      if: steps.check.outputs.release == 'false'
+      id: get-hash
+      shell: bash
+      run: |
+        echo "precice-hash=$(git ls-remote --exit-code --heads https://github.com/precice/precice.git ${{ inputs.precice-version }} | awk '{print $1}')" >> $GITHUB_OUTPUT
 
     - name: cache preCICE
       if: steps.check.outputs.release == 'false'
       uses: actions/cache@v3
       with:
         path: ${{ inputs.install-prefix }}
-        key: ${{ runner.os }}-precice-${{ inputs.precice-version }}
+        key: ${{ runner.os }}-precice-${{ steps.get-hash.outputs.precice-hash }}
         restore-keys: |
-          ${{ runner.os }}-precice-${{ inputs.precice-version }}
+          ${{ runner.os }}-precice-${{ steps.get-hash.outputs.precice-hash }}
 
     - name: check out repository
       if: steps.check.outputs.release == 'false' && steps.cache.outputs.cache-hit != 'true'
@@ -122,4 +129,4 @@ runs:
       uses: actions/cache/save@v3
       with:
         path: ${{ inputs.install-prefix }}
-        key: ${{ runner.os }}-precice-${{ inputs.precice-version }}
+        key: ${{ runner.os }}-precice-${{ steps.get-hash.outputs.precice-hash }}
