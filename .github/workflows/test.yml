@@ -47,7 +47,7 @@ jobs:
           fi
 
       - name: Run tests if not release tag
-        if: ${{ ! steps.debug.outputs.release }}
+        if: ${{ steps.debug.outputs.release }} == 'false'
         working-directory: precice/build
         run: |
           ctest
