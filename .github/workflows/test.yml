@@ -40,9 +40,14 @@ jobs:
           ls -la
           echo $PWD
           echo $LD_LIBRARY_PATH
+          if [[ ${{ inputs.precice-version }} =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::set-output name=release::true"
+          else
+            echo "::set-output name=release::false"
+          fi
 
       - name: Run tests if not release tag
-        if: '[[ ${{ inputs.precice-version }} =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]' == 'false'
+        if: ${{ ! steps.debug.outputs.release }}
         working-directory: precice/build
         run: |
           ctest
