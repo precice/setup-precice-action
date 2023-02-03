@@ -44,7 +44,7 @@ jobs:
             echo "release=false"
           fi
 
-      - name:
+      - name: debug
         run: |
           echo ${{ steps.check-release.outputs.release }}
           echo $GITHUB_WORKSPACE
