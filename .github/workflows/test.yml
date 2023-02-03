@@ -16,7 +16,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        precice-version: ['develop', 'main']
+        precice-version: ['develop', 'main', 'v2.5.0']
 
     steps:
       - name: Check out repository
@@ -41,7 +41,8 @@ jobs:
           echo $PWD
           echo $LD_LIBRARY_PATH
 
-      - name: Run tests
+      - name: Run tests if not release tag
+        if: '[[ ${{ inputs.precice-version }} =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]' == 'false'
         working-directory: precice/build
         run: |
           ctest
