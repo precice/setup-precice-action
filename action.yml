@@ -129,10 +129,6 @@ runs:
       shell: bash
       run: |
         ls -l $HOME/precice/
-        ls -l $HOME/precice/bin
-        ls -l $HOME/precice/lib
-        ls -l $HOME/precice/include
-        pkg-config --cflags --libs precice
 
     - name: cache preCICE
       if: steps.check.outputs.release == 'false' && steps.cache.outputs.cache-hit != 'true'
