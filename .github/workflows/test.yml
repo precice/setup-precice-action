@@ -52,5 +52,6 @@ jobs:
         if: steps.debug.outputs.release == 'false'
         working-directory: precice/build
         run: |
+          echo ${{ steps.debug.outputs.release }}
           ctest
           make test_install
