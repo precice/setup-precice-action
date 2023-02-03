@@ -40,6 +40,9 @@ jobs:
           ls -la
           echo $PWD
           echo $LD_LIBRARY_PATH
+
+      - name: Check for release tag
+        run: |
           if [[ ${{ inputs.precice-version }} =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
             echo "::set-output name=release::true"
           else
