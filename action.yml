@@ -40,6 +40,15 @@ runs:
         sudo apt install -y ./libprecice2_${VERSION#v}_$(lsb_release -cs).deb
         rm libprecice2_${VERSION#v}_$(lsb_release -cs).deb
 
+    - name: cache preCICE
+      if: steps.check.outputs.release == 'false'
+      uses: actions/cache@v3
+      with:
+        path: ${{ inputs.install-prefix }}
+        key: ${{ runner.os }}-precice-${{ inputs.precice-version }}
+        restore-keys: |
+          ${{ runner.os }}-precice-${{ inputs.precice-version }}
+
     - name: check out repository
       if: steps.check.outputs.release == 'false'
       uses: actions/checkout@v3
