@@ -14,7 +14,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     strategy:
-      fail-fast: false
+      fail-fast: true
       matrix:
         precice-version: ['develop', 'main', 'v2.5.0']
 
@@ -43,7 +43,7 @@ jobs:
 
       - name: Check for release tag
         run: |
-          if [[ ${{ inputs.precice-version }} =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+          if [[ ${{ matrix.precice-version }} =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
             echo "::set-output name=release::true"
           else
             echo "::set-output name=release::false"
