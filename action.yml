@@ -55,6 +55,15 @@ runs:
         key: ${{ runner.os }}-precice-${{ steps.get-hash.outputs.precice-hash }}
         restore-keys: |
           ${{ runner.os }}-precice-${{ steps.get-hash.outputs.precice-hash }}
+    
+    - name: debug
+      if: steps.check.outputs.release == 'false'
+      shell: bash
+      run: |
+        echo "cache-hit=${{ steps.cache.outputs.cache-hit }}"
+        echo "precice-hash=${{ steps.get-hash.outputs.precice-hash }}"
+        echo "precice-version=${{ inputs.precice-version }}"
+        echo "install-prefix=${{ inputs.install-prefix }}"
 
     - name: check out repository
       if: steps.check.outputs.release == 'false' && steps.cache.outputs.cache-hit != 'true'
