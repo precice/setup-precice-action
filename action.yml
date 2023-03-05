@@ -48,11 +48,10 @@ runs:
         echo "precice-hash=$(git ls-remote --exit-code --heads https://github.com/precice/precice.git ${{ inputs.precice-version }} | awk '{print $1}')" >> $GITHUB_OUTPUT
 
     - name: cache preCICE
-      id: cache
       if: steps.check.outputs.release == 'false'
       uses: actions/cache@v3
       with:
-        path: ${{ inputs.install-prefix }}
+        path: /home/runner/precice
         key: ${{ runner.os }}-precice-${{ steps.get-hash.outputs.precice-hash }}
         restore-keys: |
           ${{ runner.os }}-precice-${{ steps.get-hash.outputs.precice-hash }}
@@ -115,7 +114,14 @@ runs:
         GITHUB_WORKSPACE: $HOME
       run: |
         make -j $(nproc)
-        make install
+
+    - name: Install
+      if: steps.check.outputs.release == 'false' && steps.cache.outputs.cache-hit != 'true'
+      shell: bash
+      working-directory: precice/build
+      env:
+        GITHUB_WORKSPACE: $HOME
+      run: make install
 
     - name: Add to path
       if: steps.check.outputs.release == 'false' && steps.cache.outputs.cache-hit != 'true'
@@ -137,5 +143,5 @@ runs:
       if: steps.check.outputs.release == 'false' && steps.cache.outputs.cache-hit != 'true'
       uses: actions/cache/save@v3
       with:
-        path: ${{ inputs.install-prefix }}
+        path: /home/runner/precice
         key: ${{ runner.os }}-precice-${{ steps.get-hash.outputs.precice-hash }}
