@@ -1,48 +1,141 @@
 name: 'Build preCICE'
-description: 'Installs preCICE and adds it to the path. Ends in `$GITHUB_WORKSPACE/precice`'
+description: 'Installs preCICE in the given prefix and adds it to the path.'
 
 inputs:
   precice-version:
     required: true
     default: 'develop'
     description: 'The version of preCICE to use. Can be a branch or tag or SHA. Defaults to `develop`'
+  build-tests:
+    required: false
+    default: 'OFF'
+    description: 'Whether to build tests. Default is `OFF`'
+  install-prefix:
+    required: false
+    default: '$HOME/precice'
+    description: 'The installation prefix for preCICE. Default is `$HOME/precice`'
 
 runs:
   using: "composite"
   steps: 
+
+    - name: check for release # if the version is a release, install from prebuilt binaries
+      id: check
+      shell: bash
+      run: |
+        if [[ ${{ inputs.precice-version }} =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+          echo "release=true" >> $GITHUB_OUTPUT
+        else
+          echo "release=false" >> $GITHUB_OUTPUT
+        fi
+
+    - name: install prebuilt binaries
+      if: steps.check.outputs.release == 'true'
+      shell: bash
+      run: |
+        sudo apt update
+        sudo apt install -y wget
+        VERSION=${{ inputs.precice-version }}
+        wget https://github.com/precice/precice/releases/download/${VERSION}/libprecice2_${VERSION#v}_$(lsb_release -cs).deb
+        sudo apt install -y ./libprecice2_${VERSION#v}_$(lsb_release -cs).deb
+        rm libprecice2_${VERSION#v}_$(lsb_release -cs).deb
+    
+    - name: Get preCICE version hash
+      if: steps.check.outputs.release == 'false'
+      id: get-hash
+      shell: bash
+      run: |
+        echo "precice-hash=$(git ls-remote --exit-code --heads https://github.com/precice/precice.git ${{ inputs.precice-version }} | awk '{print $1}')" >> $GITHUB_OUTPUT
+
+    - name: cache preCICE
+      id: cache
+      if: steps.check.outputs.release == 'false'
+      uses: actions/cache@v3
+      with:
+        path: ${{ inputs.install-prefix }}
+        key: ${{ runner.os }}-precice-${{ steps.get-hash.outputs.precice-hash }}
+        restore-keys: |
+          ${{ runner.os }}-precice-${{ steps.get-hash.outputs.precice-hash }}
+    
+    - name: debug
+      if: steps.check.outputs.release == 'false'
+      shell: bash
+      run: |
+        echo "cache-hit=${{ steps.cache.outputs.cache-hit }}"
+        echo "precice-hash=${{ steps.get-hash.outputs.precice-hash }}"
+        echo "precice-version=${{ inputs.precice-version }}"
+        echo "install-prefix=${{ inputs.install-prefix }}"
+
     - name: check out repository
+      if: steps.check.outputs.release == 'false' && steps.cache.outputs.cache-hit != 'true'
       uses: actions/checkout@v3
       with:
         repository: precice/precice
         ref: ${{ inputs.precice-version }}
+        path: precice
+      env: 
+        GITHUB_WORKSPACE: $HOME
     
     - name: install dependencies
-        run: |
-            apt update
-            apt install -y build-essential cmake libeigen3-dev libxml2-dev libboost-all-dev petsc-dev python3-dev python3-numpy
+      if: steps.check.outputs.release == 'false' && steps.cache.outputs.cache-hit != 'true'
+      run: |
+        sudo apt update
+        sudo apt install -y build-essential cmake libeigen3-dev libxml2-dev libboost-all-dev petsc-dev python3-dev python3-numpy
+      shell: bash
 
     - name: Generate build directory
-        run: mkdir -p build
+      if: steps.check.outputs.release == 'false' && steps.cache.outputs.cache-hit != 'true'
+      shell: bash
+      working-directory: precice
+      env: 
+        GITHUB_WORKSPACE: $HOME
+      run: mkdir -p build
+
+    - name: Show preCICE state
+      if: steps.check.outputs.release == 'false' && steps.cache.outputs.cache-hit != 'true'
+      shell: bash
+      working-directory: precice
+      run: git log -n 1
 
     - name: Configure
-      working-directory: build
+      if: steps.check.outputs.release == 'false' && steps.cache.outputs.cache-hit != 'true'
+      shell: bash
+      working-directory: precice/build
+      env:
+        GITHUB_WORKSPACE: $HOME
       run: |
         cmake --version
-        cmake -DCMAKE_INSTALL_PREFIX=$GITHUB_WORKSPACE/precice -DCMAKE_BUILD_TYPE=Release -DPRECICE_PETScMapping=OFF -DPRECICE_Python_Actions=OFF ..
+        cmake -DCMAKE_INSTALL_PREFIX=${{ inputs.install-prefix }} -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=${{ inputs.build-tests }} ..
 
     - name: Compile
-      working-directory: build
+      if: steps.check.outputs.release == 'false' && steps.cache.outputs.cache-hit != 'true'
+      shell: bash
+      working-directory: precice/build
+      env:
+        GITHUB_WORKSPACE: $HOME
       run: |
         make -j $(nproc)
-
-    - name: Install
-      working-directory: build
-      run: make install
+        make install
 
     - name: Add to path
-        run: |
-          echo "$GITHUB_WORKSPACE/precice/bin" >> $PATH
-          echo "$GITHUB_WORKSPACE/precice/lib" >> $LD_LIBRARY_PATH
-          echo "$GITHUB_WORKSPACE/precice/include" >> $CPATH
-          echo "$GITHUB_WORKSPACE/precice/lib/pkgconfig" >> $PKG_CONFIG_PATH
-          echo "$GITHUB_WORKSPACE/precice" >> $CMAKE_PREFIX_PATH
+      if: steps.check.outputs.release == 'false' && steps.cache.outputs.cache-hit != 'true'
+      shell: bash
+      run: |
+        echo "PATH=$HOME/precice/bin:$PATH" >> $GITHUB_ENV
+        echo "LD_LIBRARY_PATH=$HOME/precice/lib:$LD_LIBRARY_PATH" >> $GITHUB_ENV
+        echo "PKG_CONFIG_PATH=$HOME/precice/lib/pkgconfig:$PKG_CONFIG_PATH" >> $GITHUB_ENV
+        echo "CPATH=$HOME/precice/include:$CPATH" >> $GITHUB_ENV
+        echo "CMAKE_PREFIX_PATH=$HOME/precice:$CMAKE_PREFIX_PATH" >> $GITHUB_ENV
+
+    - name: More debugging
+      if: steps.check.outputs.release == 'false' && steps.cache.outputs.cache-hit != 'true'
+      shell: bash
+      run: |
+        ls -l $HOME/precice/
+
+    - name: cache preCICE
+      if: steps.check.outputs.release == 'false' && steps.cache.outputs.cache-hit != 'true'
+      uses: actions/cache/save@v3
+      with:
+        path: ${{ inputs.install-prefix }}
+        key: ${{ runner.os }}-precice-${{ steps.get-hash.outputs.precice-hash }}
