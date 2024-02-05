@@ -36,9 +36,10 @@ runs:
         sudo apt update
         sudo apt install -y wget
         VERSION=${{ inputs.precice-version }}
-        wget https://github.com/precice/precice/releases/download/${VERSION}/libprecice2_${VERSION#v}_$(lsb_release -cs).deb
-        sudo apt install -y ./libprecice2_${VERSION#v}_$(lsb_release -cs).deb
-        rm libprecice2_${VERSION#v}_$(lsb_release -cs).deb
+        MAJORVERSION=${VERSION:1:1}
+        wget https://github.com/precice/precice/releases/download/${VERSION}/libprecice${MAJORVERSION}_${VERSION#v}_$(lsb_release -cs).deb
+        sudo apt install -y ./libprecice${MAJORVERSION}_${VERSION#v}_$(lsb_release -cs).deb
+        rm libprecice${MAJORVERSION}_${VERSION#v}_$(lsb_release -cs).deb
     
     - name: Get preCICE version hash
       if: steps.check.outputs.release == 'false'
