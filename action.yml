@@ -122,17 +122,17 @@ runs:
       if: steps.check.outputs.release == 'false' && steps.cache.outputs.cache-hit != 'true'
       shell: bash
       run: |
-        echo "PATH=$HOME/precice/bin:$PATH" >> $GITHUB_ENV
-        echo "LD_LIBRARY_PATH=$HOME/precice/lib:$LD_LIBRARY_PATH" >> $GITHUB_ENV
-        echo "PKG_CONFIG_PATH=$HOME/precice/lib/pkgconfig:$PKG_CONFIG_PATH" >> $GITHUB_ENV
-        echo "CPATH=$HOME/precice/include:$CPATH" >> $GITHUB_ENV
-        echo "CMAKE_PREFIX_PATH=$HOME/precice:$CMAKE_PREFIX_PATH" >> $GITHUB_ENV
+        echo "PATH=${{ inputs.install-prefix }}/bin:$PATH" >> $GITHUB_ENV
+        echo "LD_LIBRARY_PATH=${{ inputs.install-prefix }}/lib:$LD_LIBRARY_PATH" >> $GITHUB_ENV
+        echo "PKG_CONFIG_PATH=${{ inputs.install-prefix }}/lib/pkgconfig:$PKG_CONFIG_PATH" >> $GITHUB_ENV
+        echo "CPATH=${{ inputs.install-prefix }}/include:$CPATH" >> $GITHUB_ENV
+        echo "CMAKE_PREFIX_PATH=${{ inputs.install-prefix }}:$CMAKE_PREFIX_PATH" >> $GITHUB_ENV
 
     - name: More debugging
       if: steps.check.outputs.release == 'false' && steps.cache.outputs.cache-hit != 'true'
       shell: bash
       run: |
-        ls -l $HOME/precice/
+        ls -l ${{ inputs.install-prefix }}
 
     - name: cache preCICE
       if: steps.check.outputs.release == 'false' && steps.cache.outputs.cache-hit != 'true'
