@@ -30,7 +30,6 @@ runs:
         fi
 
     - name: install common dependencies
-      if: steps.check.outputs.release == 'true'
       shell: bash
       run: |
         CMD=$([ "$(id -u)" -ne 0 ] && echo "sudo" || echo "")
