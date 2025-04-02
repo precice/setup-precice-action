@@ -10,7 +10,7 @@ The version of preCICE to use. Can be a branch or tag or SHA. Defaults to `devel
 
 ### `install-prefix`
 
-The installation prefix for preCICE. Default is `/usr/local`
+The installation prefix for preCICE. Default is `$HOME/precice`
 
 ### `build-tests`
 
@@ -23,5 +23,4 @@ Whether to build tests. Should be `OFF` off for all non-develop builds. Defaults
   uses: precice/setup-precice-action@main
   with:
     precice-version: develop
-    install-prefix: /usr/local
 ```
